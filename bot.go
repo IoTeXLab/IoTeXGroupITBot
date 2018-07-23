@@ -1,14 +1,18 @@
 package main
 
 import (
-	"os"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
-	"gopkg.in/telegram-bot-api.v4"
+	"os"
 )
 
 func main() {
-        API:= os.Getenv("BOTAPIKEY")
-        log.Printf("Found Telegram Bot API: %s",API)
+	API := os.Getenv("BOTAPIKEY")
+	if API == "" {
+		log.Fatal("Telegram Bot API key not defined.\nPlease define environment variable BOTAPIKEY")
+		return
+	}
+	log.Printf("Found Telegram Bot API: %s", API)
 	bot, err := tgbotapi.NewBotAPI(API)
 	if err != nil {
 		log.Panic(err)
