@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"github.com/tkanos/gonfig"
-	"time"
 )
 
 type Configuration struct {
@@ -17,22 +16,23 @@ type Configuration struct {
 	CommandsWhitelist []string
 }
 
-var configuration Configuration
+var cfg Configuration
+
+var bot *tgbotapi.BotAPI
 
 func main() {
 
-	err := gonfig.GetConf("configuration.json", &configuration)
+	err := gonfig.GetConf("configuration.json", &cfg)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(configuration)
+	log.Println(cfg)
 
 	API := GetApiKey();
 
-	log.Printf("Found Telegram Bot API: %s", API)
-	bot, err := tgbotapi.NewBotAPI(API)
+	bot, err = tgbotapi.NewBotAPI(API)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -49,69 +49,49 @@ func main() {
 	updates.Clear()
 
 	for update := range updates {
-		if update.Message == nil {
+
+		message := update.Message;
+
+		// Ignore null messages
+		if message == nil {
 			continue
 		}
 
-		if update.Message.IsCommand() {
-			// Process commands here
+		// Process commands
+		if message.IsCommand() {
+
+			command := message.Command()
+
+			switch command {
+				// Process commands here
+			}
+
+			continue
 		}
 
-		// Filter spam by kicking new users when they include long text as First/Last name
+		// Kicking new users when they include long text in First/Last name fields
 		if update.Message.NewChatMembers != nil {
+
 			for _,user:=range *update.Message.NewChatMembers {
-				log.Printf("_________________________")
-				log.Printf(time.Now().Format("01-02-2018 15:04:05"))
-				log.Printf("_________________________")
-				log.Printf("New user joined the group")
-				log.Printf("Username: %s", user.UserName)
-				log.Printf("First Name: %s",user.FirstName)
-				log.Printf("Last Name: %s", user.LastName)
-				log.Printf("_________________________")
 
-				if configuration.KickOnFirstNameLength && len(user.FirstName) > configuration.FirstNameMaxLength {
+				LogNewUserJoined(message.Chat, user)
+
+				firstNameLength := len(user.FirstName)
+				fullNameLength := firstNameLength + len(user.LastName)
+
+				if cfg.KickOnFirstNameLength && firstNameLength > cfg.FirstNameMaxLength {
 					// delete the join message
-					delConfig := tgbotapi.DeleteMessageConfig{}
-					delConfig.ChatID = update.Message.Chat.ID
-					delConfig.MessageID = update.Message.MessageID
-					_,err := bot.DeleteMessage(delConfig)
-					if err != nil{
-						log.Printf("Error deleting join message for user %s: %s",user.UserName, err)
-					}
-
-					kickConfig:=tgbotapi.KickChatMemberConfig{}
-					kickConfig.ChatID = update.Message.Chat.ID
-					kickConfig.UserID = user.ID
-					_, err = bot.KickChatMember(kickConfig)
-					if err != nil{
-						log.Printf("Error kicking user %s: %s",user.UserName, err)
-					} else {
-						log.Printf("[KICK] Kicked user %s: Name length = %d > %d", user.UserName, len(user.FirstName), configuration.FirstNameMaxLength)
-					}
+					DeleteMessage(message)
+					// Kick (but not ban) the user
+					KickUser(message.Chat, user, false)
+					continue
 				}
 
-				fullNameLength := len(user.FirstName) + len(user.LastName)
-
-				if configuration.KickOnFullNameLength && fullNameLength > configuration.FullNameMaxLength {
+				if cfg.KickOnFullNameLength && fullNameLength > cfg.FullNameMaxLength {
 					// delete the join message
-					delConfig := tgbotapi.DeleteMessageConfig{}
-					delConfig.ChatID = update.Message.Chat.ID
-					delConfig.MessageID = update.Message.MessageID
-					_,err := bot.DeleteMessage(delConfig)
-					if err != nil{
-						log.Printf("Error deleting join message for user %s: %s",user.UserName, err)
-					}
-
-					// kick the user
-					kickConfig:=tgbotapi.KickChatMemberConfig{}
-					kickConfig.ChatID = update.Message.Chat.ID
-					kickConfig.UserID = user.ID
-					_, err = bot.KickChatMember(kickConfig)
-					if err != nil{
-						log.Printf("Error kicking user %s: %s",user.UserName, err)
-					} else {
-						log.Printf("[KICK] Kicked user %s: Full name length = %d > %d", user.UserName, fullNameLength, configuration.FullNameMaxLength)
-					}
+					DeleteMessage(message)
+					// Kick (but not ban) the user
+					KickUser(message.Chat, user, false)
 				}
 			}
 		}
@@ -119,17 +99,59 @@ func main() {
 	}
 }
 
-func GetApiKey() string {
-	// "673613669:AAFt-sbY8CA67oRpUPCV5O4P5cYQPFhLzM0"
+// Kick the user from the chat. Optionally, ban it
+func KickUser(chat *tgbotapi.Chat, user tgbotapi.User, ban bool) {
+	kickConfig := tgbotapi.KickChatMemberConfig{}
+	kickConfig.ChatID = chat.ID
+	kickConfig.UserID = user.ID
+	_, err := bot.KickChatMember(kickConfig)
+	if err != nil {
+		log.Printf("Error kicking user %s: %s", user.UserName, err)
+	} else {
+		log.Printf("[KICK] Kicked user %s: Name length = %d > %d", user.UserName, len(user.FirstName), cfg.FirstNameMaxLength)
+	}
 
+	// User is banned by default when kicked
+	if ban == true {
+		return
+	}
+
+	unBanConfig := tgbotapi.ChatMemberConfig{}
+	unBanConfig.ChatID = chat.ID
+	unBanConfig.UserID = user.ID
+	bot.UnbanChatMember(unBanConfig)
+}
+
+// Delete a message
+func DeleteMessage(message *tgbotapi.Message)  {
+	delConfig := tgbotapi.DeleteMessageConfig{}
+	delConfig.ChatID = message.Chat.ID
+	delConfig.MessageID = message.MessageID
+	_, err := bot.DeleteMessage(delConfig)
+	if err != nil {
+		log.Printf("Error deleting join message for user %s: %s", message.From.UserName, err)
+	}
+}
+
+// Log the new user join event
+func LogNewUserJoined(chat *tgbotapi.Chat, user tgbotapi.User) {
+	log.Printf("_________________________")
+	log.Printf("New user joined the group %s", chat.UserName)
+	log.Printf("Username: %s", user.UserName)
+	log.Printf("First Name: %s", user.FirstName)
+	log.Printf("Last Name: %s", user.LastName)
+}
+
+// Obtain the Telegram Bot Api key either by environment variable or configuration.json
+func GetApiKey() string {
 	usingJson := false;
 
 	log.Print("looking for Telegram Bot API Key in BOTAPIKEY environment variable...")
 	API := os.Getenv("BOTAPIKEY")
 	if API == "" {
 		log.Print("Not found\n")
-		log.Print("looking for Telegram Bot API Key in configuration.json file...")
-		API = configuration.ApiKey
+		log.Print("looking for Telegram Bot API Key in cfg.json file...")
+		API = cfg.ApiKey
 		usingJson = true;
 	}
 
@@ -137,12 +159,10 @@ func GetApiKey() string {
 		log.Fatal("Telegram API Key not found!")
 	}
 	if usingJson {
-		log.Printf("Using Api key found in configuration file:")
+		log.Printf("Using Api key found in cfg file:")
 	} else {
-		log.Printf("Using Api key found in Environment variable: ")
+		log.Printf("Using Api key found in Environment variable")
 	}
-
-	log.Println(API)
 
 	return API
 }
