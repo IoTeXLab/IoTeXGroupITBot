@@ -2,8 +2,14 @@
 A custom Telegram bot written in Go Lang to manage the [IoTeXGroupIT](http://t.me/IoTeXGroupIT) Telegram Group, especially to filter out chinese fake users which insert the spam message embedded in the First/Last Name fields.
 
 ## Features
+
+### Spam Filter
 - Kicks (but doesn't ban) a user from a group when he joins with **First Name** longer than a specific value
 - Kicks (but doesn't ban) a user from a group when he joins with **Full Name** longer than a specific value
+
+### Commands
+- **/help** Display the commands list
+- **/roadmap** Display the current IoTeX Roadmap (image)
 
 ## Instructions
 - Install Go Lang
