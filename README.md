@@ -1,5 +1,5 @@
 # IoTeXGroupITBot
-A custom Telegram bot written in Go Lang to manage the IoTeXGroupIT Telegram Group, especially to filter out chinese fake users which insert the spam message embedded in the First/Last Name fields.
+A custom Telegram bot written in Go Lang to manage the [IoTeXGroupIT](http://t.me/IoTeXGroupIT) Telegram Group, especially to filter out chinese fake users which insert the spam message embedded in the First/Last Name fields.
 
 ## Features
 - Kicks (but doesn't ban) a user from a group when he joins with **First Name** longer than a specific value
