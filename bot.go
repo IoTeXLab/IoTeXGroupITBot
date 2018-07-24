@@ -44,11 +44,10 @@ func main() {
 
 	updates, err := bot.GetUpdatesChan(u)
 
-	updates.Clear()
-
 	for update := range updates {
 
-		message := update.Message;
+		message := update.Message
+		chat := message.Chat
 
 		// Ignore null messages
 		if message == nil {
@@ -57,27 +56,27 @@ func main() {
 
 		// Process commands
 		if message.IsCommand() {
+			switch message.Command() {
 
-			command := message.Command()
-
-			switch command {
-				// Process commands here
+			case "help": // Shows available commands
+				PostHelp(chat, message)
+			case "roadmap": // Post the roadmap image
+				PostRoadmap(chat, message)
 			}
-
 			continue
 		}
 
 		// Kicking new users when they include long text in First/Last name fields
-		if update.Message.NewChatMembers != nil {
-			
-			for _,user:=range *update.Message.NewChatMembers {
+		if message.NewChatMembers != nil {
+
+			for _, user := range *message.NewChatMembers {
 
 				LogNewUserJoined(message.Chat, user)
 
 				firstNameLength := len(user.FirstName)
 				fullNameLength := firstNameLength + len(user.LastName)
 				// TODO: if we want sto stay even safer, whe could kick only chinese text?
-				
+
 				if cfg.KickOnFirstNameLength && firstNameLength > cfg.FirstNameMaxLength {
 					// delete the join message
 					DeleteMessage(message)
@@ -96,6 +95,24 @@ func main() {
 		}
 
 	}
+}
+
+func PostHelp(chat *tgbotapi.Chat, message *tgbotapi.Message) {
+	msg := tgbotapi.NewMessage(chat.ID,
+		"/help visualizza questo messaggio\n"+
+			"/roadmap Visualizza la roadmap IoTeX")
+	msg.DisableNotification = true
+	msg.ParseMode = "Markdown"
+	msg.ReplyToMessageID = message.MessageID
+	bot.Send(msg)
+}
+
+func PostRoadmap(chat *tgbotapi.Chat, message *tgbotapi.Message) {
+	msg := tgbotapi.NewPhotoUpload(chat.ID, "images/roadmap.png")
+	msg.Caption = "Roadmap IoTeX"
+	msg.ReplyToMessageID = message.MessageID
+	msg.DisableNotification = true
+	bot.Send(msg)
 }
 
 // Kick the user from the chat. Optionally, ban it
