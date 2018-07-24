@@ -69,14 +69,15 @@ func main() {
 
 		// Kicking new users when they include long text in First/Last name fields
 		if update.Message.NewChatMembers != nil {
-
+			
 			for _,user:=range *update.Message.NewChatMembers {
 
 				LogNewUserJoined(message.Chat, user)
 
 				firstNameLength := len(user.FirstName)
 				fullNameLength := firstNameLength + len(user.LastName)
-
+				// TODO: if we want sto stay even safer, whe could kick only chinese text?
+				
 				if cfg.KickOnFirstNameLength && firstNameLength > cfg.FirstNameMaxLength {
 					// delete the join message
 					DeleteMessage(message)
