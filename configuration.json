@@ -3,6 +3,5 @@
   "KickOnFirstNameLength": true,
   "FirstNameMaxLength": 50,
   "KickOnFullNameLength": true,
-  "FullNameMaxLength": 80,
-  "CommandsWhitelist": ["zimne"]
+  "FullNameMaxLength": 80
 }
