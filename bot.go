@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"github.com/tkanos/gonfig"
+	"time"
 )
 
 type Configuration struct {
@@ -56,15 +57,60 @@ func main() {
 			// Process commands here
 		}
 
+		// Filter spam by kicking new users when they include long text as First/Last name
 		if update.Message.NewChatMembers != nil {
 			for _,user:=range *update.Message.NewChatMembers {
+				log.Printf("_________________________")
+				log.Printf(time.Now().Format("01-02-2018 15:04:05"))
+				log.Printf("_________________________")
+				log.Printf("New user joined the group")
+				log.Printf("Username: %s", user.UserName)
+				log.Printf("First Name: %s",user.FirstName)
+				log.Printf("Last Name: %s", user.LastName)
+				log.Printf("_________________________")
+
 				if configuration.KickOnFirstNameLength && len(user.FirstName) > configuration.FirstNameMaxLength {
-					config:=tgbotapi.KickChatMemberConfig{}
-					config.ChatID = update.Message.Chat.ID
-					config.UserID = user.ID
-					_, err := bot.KickChatMember(config)
+					// delete the join message
+					delConfig := tgbotapi.DeleteMessageConfig{}
+					delConfig.ChatID = update.Message.Chat.ID
+					delConfig.MessageID = update.Message.MessageID
+					_,err := bot.DeleteMessage(delConfig)
+					if err != nil{
+						log.Printf("Error deleting join message for user %s: %s",user.UserName, err)
+					}
+
+					kickConfig:=tgbotapi.KickChatMemberConfig{}
+					kickConfig.ChatID = update.Message.Chat.ID
+					kickConfig.UserID = user.ID
+					_, err = bot.KickChatMember(kickConfig)
 					if err != nil{
 						log.Printf("Error kicking user %s: %s",user.UserName, err)
+					} else {
+						log.Printf("[KICK] Kicked user %s: Name length = %d > %d", user.UserName, len(user.FirstName), configuration.FirstNameMaxLength)
+					}
+				}
+
+				fullNameLength := len(user.FirstName) + len(user.LastName)
+
+				if configuration.KickOnFullNameLength && fullNameLength > configuration.FullNameMaxLength {
+					// delete the join message
+					delConfig := tgbotapi.DeleteMessageConfig{}
+					delConfig.ChatID = update.Message.Chat.ID
+					delConfig.MessageID = update.Message.MessageID
+					_,err := bot.DeleteMessage(delConfig)
+					if err != nil{
+						log.Printf("Error deleting join message for user %s: %s",user.UserName, err)
+					}
+
+					// kick the user
+					kickConfig:=tgbotapi.KickChatMemberConfig{}
+					kickConfig.ChatID = update.Message.Chat.ID
+					kickConfig.UserID = user.ID
+					_, err = bot.KickChatMember(kickConfig)
+					if err != nil{
+						log.Printf("Error kicking user %s: %s",user.UserName, err)
+					} else {
+						log.Printf("[KICK] Kicked user %s: Full name length = %d > %d", user.UserName, fullNameLength, configuration.FullNameMaxLength)
 					}
 				}
 			}

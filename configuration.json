@@ -1,5 +1,5 @@
 {
-  "ApiKey": "PUT YOUR BOT API KEY IN CONFIGURATION FILE OR USE BOTAPIKEY ENVIRONMENT VARIABLE",
+  "ApiKey": "",
   "KickOnFirstNameLength": true,
   "FirstNameMaxLength": 50,
   "KickOnFullNameLength": true,
