@@ -28,8 +28,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(cfg)
-
 	API := GetApiKey();
 
 	bot, err = tgbotapi.NewBotAPI(API)
