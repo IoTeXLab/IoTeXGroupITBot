@@ -7,6 +7,9 @@ A custom Telegram bot written in Go Lang to manage the [IoTeXGroupIT](http://t.m
 - Kicks (but doesn't ban) a user from a group when he joins with **First Name** longer than a specific value
 - Kicks (but doesn't ban) a user from a group when he joins with **Full Name** longer than a specific value
 
+### Welcome message
+A welcome message is posted when a new user joins the group if the corresponding settings are enabled in the configuration file. The welcome message has disabled notification, and each new welcome message deletes the previous one to avoid group cluttering 
+
 ### Commands
 - **/help** Display the commands list
 - **/roadmap** Display the current IoTeX Roadmap (image)
