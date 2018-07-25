@@ -3,5 +3,7 @@
   "KickOnFirstNameLength": true,
   "FirstNameMaxLength": 50,
   "KickOnFullNameLength": true,
-  "FullNameMaxLength": 80
+  "FullNameMaxLength": 80,
+  "PostWelcomeMessage": true,
+  "WelcomeMessage": "🎉Benvenuto %s nel gruppo IoTeX Italia! 🙌\n\n🔶Dài uno sguardo al messaggio pinnato👆per i programmi reward in corso e le ultime novità.\n\n🔷Non esitare a iniziare una discussione sul progetto IoTeX, o a fare qualsiasi domanda.\n\nFai attenzione alle truffe, e divertiti!🎈"
 }

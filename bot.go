@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"github.com/tkanos/gonfig"
+	"fmt"
 )
 
 type Configuration struct {
@@ -13,12 +14,15 @@ type Configuration struct {
 	FirstNameMaxLength int
 	KickOnFullNameLength bool
 	FullNameMaxLength int
-	CommandsWhitelist []string
+	PostWelcomeMessage bool
+	WelcomeMessage string
 }
 
 var cfg Configuration
 
 var bot *tgbotapi.BotAPI
+
+var lastWelcomeMessage *tgbotapi.Message
 
 func main() {
     log.Printf("[START] Starting the bot...")
@@ -69,17 +73,16 @@ func main() {
 			continue
 		}
 
-		// Kicking new users when they include long text in First/Last name fields
+		// Manage new users joined messages
 		if message.NewChatMembers != nil {
 
 			for _, user := range *message.NewChatMembers {
-
+				// We log any new join
 				LogNewUserJoined(message.Chat, user)
 
+				// Spam filter rule applied to First Name length
 				firstNameLength := len(user.FirstName)
-				fullNameLength := firstNameLength + len(user.LastName)
 				// TODO: if we want sto stay even safer, whe could kick only chinese text?
-
 				if cfg.KickOnFirstNameLength && firstNameLength > cfg.FirstNameMaxLength {
 					// delete the join message
 					DeleteMessage(message)
@@ -88,16 +91,36 @@ func main() {
 					continue
 				}
 
+				// Spam filter rule applied on Full Name length
+				fullNameLength := firstNameLength + len(user.LastName)
 				if cfg.KickOnFullNameLength && fullNameLength > cfg.FullNameMaxLength {
 					// delete the join message
 					DeleteMessage(message)
 					// Kick (but not ban) the user
 					KickUser(message.Chat, user, false)
+					continue
+				}
+
+				// Send welcome message
+				if cfg.PostWelcomeMessage {
+					PostWelcomeMessage(chat, message)
 				}
 			}
 		}
 
 	}
+}
+
+// Post the welcome message
+func PostWelcomeMessage(chat *tgbotapi.Chat, joinMessage *tgbotapi.Message) {
+	msg := tgbotapi.NewMessage(chat.ID, fmt.Sprintf(cfg.WelcomeMessage, joinMessage.From.FirstName))
+	msg.ReplyToMessageID = joinMessage.MessageID
+	msg.DisableNotification = true
+	if lastWelcomeMessage != nil {
+		DeleteMessage(lastWelcomeMessage)
+	}
+	sentMessage, _ := bot.Send(msg)
+	lastWelcomeMessage = &sentMessage
 }
 func PostWrongCommandMessage(chat *tgbotapi.Chat, message *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(chat.ID,
