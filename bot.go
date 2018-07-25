@@ -46,13 +46,13 @@ func main() {
 
 	for update := range updates {
 
-		message := update.Message
-		chat := message.Chat
-
 		// Ignore null messages
-		if message == nil {
+		if update.Message == nil {
 			continue
 		}
+
+		message := update.Message
+		chat := message.Chat
 
 		// Process commands
 		if message.IsCommand() {
