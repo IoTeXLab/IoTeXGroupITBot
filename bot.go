@@ -21,6 +21,7 @@ var cfg Configuration
 var bot *tgbotapi.BotAPI
 
 func main() {
+    log.Printf("[START] Starting the bot...")
 
 	err := gonfig.GetConf("configuration.json", &cfg)
 
@@ -59,9 +60,11 @@ func main() {
 			switch message.Command() {
 
 			case "help": // Shows available commands
-				PostHelp(chat, message)
+				PostHelpMessage(chat, message)
 			case "roadmap": // Post the roadmap image
-				PostRoadmap(chat, message)
+				PostRoadmapImage(chat, message)
+			default:
+				PostWrongCommandMessage(chat, message)
 			}
 			continue
 		}
@@ -96,8 +99,19 @@ func main() {
 
 	}
 }
+func PostWrongCommandMessage(chat *tgbotapi.Chat, message *tgbotapi.Message) {
+	msg := tgbotapi.NewMessage(chat.ID,
+		"Il comando inserito non è valido.\n"+
+		"Se cerchi il Bounty Bot di IoTeX" +
+		"clicca su @IoTeXBountyBot e inizia" +
+		"una conversazione privata con il bot.")
+	msg.DisableNotification = true
+	msg.ParseMode = "Markdown"
+	msg.ReplyToMessageID = message.MessageID
+	bot.Send(msg)
+}
 
-func PostHelp(chat *tgbotapi.Chat, message *tgbotapi.Message) {
+func PostHelpMessage(chat *tgbotapi.Chat, message *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(chat.ID,
 		"/help visualizza questo messaggio\n"+
 			"/roadmap Visualizza la roadmap IoTeX")
@@ -107,7 +121,7 @@ func PostHelp(chat *tgbotapi.Chat, message *tgbotapi.Message) {
 	bot.Send(msg)
 }
 
-func PostRoadmap(chat *tgbotapi.Chat, message *tgbotapi.Message) {
+func PostRoadmapImage(chat *tgbotapi.Chat, message *tgbotapi.Message) {
 	msg := tgbotapi.NewPhotoUpload(chat.ID, "images/roadmap.png")
 	msg.Caption = "Roadmap IoTeX"
 	msg.ReplyToMessageID = message.MessageID
