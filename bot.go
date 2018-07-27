@@ -125,7 +125,7 @@ func PostWelcomeMessage(chat *tgbotapi.Chat, joinMessage *tgbotapi.Message) {
 func PostWrongCommandMessage(chat *tgbotapi.Chat, message *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(chat.ID,
 		"Il comando inserito non è valido.\n"+
-		"Se cerchi il Bounty Bot di IoTeX" +
+		"Se cerchi il Bounty Bot di IoTeX " +
 		"clicca su @IoTeXBountyBot e inizia" +
 		"una conversazione privata con il bot.")
 	msg.DisableNotification = true
