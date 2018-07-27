@@ -5,5 +5,6 @@
   "KickOnFullNameLength": true,
   "FullNameMaxLength": 80,
   "PostWelcomeMessage": true,
-  "WelcomeMessage": "🎉Benvenuto %s nel gruppo IoTeX Italia! 🙌\n\n🔶Dài uno sguardo al messaggio pinnato👆per i programmi reward in corso e le ultime novità.\n\n🔷Non esitare a iniziare una discussione sul progetto IoTeX, o a fare qualsiasi domanda.\n\nFai attenzione alle truffe, e divertiti!🎈\nDigita \\roadmap per la Roadmap di IoTeX"
+  "WelcomeMessage": "🎉Benvenuto %s nel gruppo IoTeX Italia! 🙌\n\n🔶Dài uno sguardo al messaggio pinnato👆per i programmi reward in corso e le ultime novità.\n\n🔷Non esitare a iniziare una discussione sul progetto IoTeX, o a fare qualsiasi domanda.n\n\n👉Digita /roadmap per la roadmap IoTeX\n\nFai attenzione alle truffe, e divertiti!🎈"
 }
+

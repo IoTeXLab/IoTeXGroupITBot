@@ -119,7 +119,11 @@ func PostWelcomeMessage(chat *tgbotapi.Chat, joinMessage *tgbotapi.Message) {
 	if lastWelcomeMessage != nil {
 		DeleteMessage(lastWelcomeMessage)
 	}
-	sentMessage, _ := bot.Send(msg)
+	sentMessage, err := bot.Send(msg)
+	if err != nil {
+		log.Printf(err.Error())
+		return
+	}
 	lastWelcomeMessage = &sentMessage
 }
 func PostWrongCommandMessage(chat *tgbotapi.Chat, message *tgbotapi.Message) {
