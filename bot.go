@@ -5,6 +5,7 @@ import (
 	"log"
 	"github.com/simonerom/IoTeXGroupITBot/configuration"
 	"github.com/simonerom/IoTeXGroupITBot/botApi"
+	"github.com/simonerom/IoTeXGroupITBot/reminder"
 )
 
 
@@ -46,6 +47,8 @@ func main() {
 				botApi.PostHelpMessage(bot, chat, message)
 			case "roadmap": // Post the roadmap image
 				botApi.PostRoadmapImage(bot, chat, message)
+			case "events":
+				reminder.List(bot, chat)
 			default:
 				botApi.PostWrongCommandMessage(bot, chat, message)
 			}
