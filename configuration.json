@@ -1,5 +1,4 @@
 {
-  "ApiKey": "",
   "KickOnFirstNameLength": true,
   "FirstNameMaxLength": 50,
   "KickOnFullNameLength": true,

@@ -7,7 +7,6 @@ import (
 )
 
 type Configuration struct {
-	ApiKey                string
 	KickOnFirstNameLength bool
 	FirstNameMaxLength    int
 	KickOnFullNameLength  bool
