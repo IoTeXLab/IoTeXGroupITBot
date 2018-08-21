@@ -14,6 +14,7 @@ func main() {
     log.Printf("[START] Starting the bot...")
 
 	API := configuration.GetApiKey();
+	log.Printf("Using Telegram API Key %s", API)
 
 	bot, err := tgbotapi.NewBotAPI(API)
 
