@@ -17,8 +17,8 @@ A welcome message is posted when a new user joins the group if the corresponding
 
 ## Instructions
 - Install Go Lang
-- Build the bot with go lang (crosscompile command for Linux *buildLinux* is provided)
-- Set the Environment variable BOTAPIKEY with your Telegram Bot Api Key or
-- optionally, put your Api Key into the configuration.json file
-- Edit the options in configuration.json file according to your spam filter preferences
-- run with ./bot
+- Build the bot with go lang (the executable `buildLinux` is provided to crosscompile for Linux )
+- Copy the bot executable file to your server  
+- On your server, set the Environment variable BOTAPIKEY with your Telegram Bot Api Key 
+- Edit the bot options in configuration.json file according to your preferences
+- run with the bot on the server (in Linux run with `./bot 2> bot_log &`)
