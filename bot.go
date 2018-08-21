@@ -1,19 +1,18 @@
 package main
 
 import (
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/botApi"
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/configuration"
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/reminder"
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/spamFilter"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
-	"github.com/simonerom/IoTeXGroupITBot/configuration"
-	"github.com/simonerom/IoTeXGroupITBot/botApi"
-	"github.com/simonerom/IoTeXGroupITBot/reminder"
-	"github.com/simonerom/IoTeXGroupITBot/spamFilter"
 )
 
-
 func main() {
-    log.Printf("[START] Starting the bot...")
+	log.Printf("[START] Starting the bot...")
 
-	API := configuration.GetApiKey();
+	API := configuration.GetApiKey()
 	log.Printf("Using Telegram API Key %s", API)
 
 	bot, err := tgbotapi.NewBotAPI(API)
@@ -79,8 +78,6 @@ func main() {
 	}
 }
 
-
-
 // Log the new user join event
 func LogNewUserJoined(chat *tgbotapi.Chat, user tgbotapi.User) {
 	log.Printf("_________________________")
@@ -91,4 +88,3 @@ func LogNewUserJoined(chat *tgbotapi.Chat, user tgbotapi.User) {
 }
 
 // Obtain the Telegram Bot Api key either by environment variable or configuration.json
-

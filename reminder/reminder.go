@@ -1,23 +1,23 @@
 package reminder
 
 import (
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/botApi"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"time"
-	"github.com/simonerom/IoTeXGroupITBot/botApi"
-	"strconv"
 	"sort"
+	"strconv"
+	"time"
 )
 
 type ReminderClass int
 
-const (
+/*const (
 	// This event has only a start date/time, it happens at a specific moment (e.g. meetings)
 	OneShot ReminderClass = 0
 	// This event has a start and finish date/time, it happens during an interval of time (e.g. bounty programs)
 	StartEndDate ReminderClass = 1
 	// This event has a only a finish date/time it ends by a specific moment (e.g. deadlines)
 	Deadline ReminderClass = 2
-)
+)*/
 
 type Reminder struct {
 	title       string
@@ -54,14 +54,14 @@ func List(bot *tgbotapi.BotAPI, chat *tgbotapi.Chat) {
 	msg := "*Prossimi Eventi IoTeX*"
 
 	var previousLeftTime time.Duration
-	for _, reminder := range (reminders) {
+	for _, reminder := range reminders {
 		leftTime, leftTimeStr := getLeftTime(reminder.finishDate)
 
 		if leftTime < 0 {
 			continue
 		}
 
-		if (leftTime != previousLeftTime) {
+		if leftTime != previousLeftTime {
 			msg += "\n\n*tra " + leftTimeStr + "*"
 		}
 		msg += "\n" + reminder.title

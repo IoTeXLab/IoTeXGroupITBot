@@ -1,10 +1,10 @@
 package botApi
 
 import (
+	"fmt"
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/configuration"
 	. "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
-	"fmt"
-	"github.com/simonerom/IoTeXGroupITBot/configuration"
 )
 
 var lastWelcomeMessage *Message
@@ -23,7 +23,7 @@ func PostTextMessage(bot *BotAPI, chat *Chat, text string, notification bool, re
 	msg := NewMessage(chat.ID, text)
 	msg.DisableNotification = !notification
 	msg.ParseMode = "MarkDown"
-	if (replyTo != nil) {
+	if replyTo != nil {
 		msg.ReplyToMessageID = replyTo.MessageID
 	}
 	bot.Send(msg)

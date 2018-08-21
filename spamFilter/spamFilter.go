@@ -1,12 +1,12 @@
 package spamFilter
 
 import (
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/botApi"
+	"github.com/IoTeXGroupIT/IoTeXGroupITBot/configuration"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/simonerom/IoTeXGroupITBot/configuration"
-	"github.com/simonerom/IoTeXGroupITBot/botApi"
 )
 
-func FilterNewUserJoined(bot *tgbotapi.BotAPI, joinMessage *tgbotapi.Message) (bool) {
+func FilterNewUserJoined(bot *tgbotapi.BotAPI, joinMessage *tgbotapi.Message) bool {
 	user := joinMessage.From
 
 	// Spam filter rule applied to First Name length
