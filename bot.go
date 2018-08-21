@@ -6,6 +6,7 @@ import (
 	"github.com/simonerom/IoTeXGroupITBot/configuration"
 	"github.com/simonerom/IoTeXGroupITBot/botApi"
 	"github.com/simonerom/IoTeXGroupITBot/reminder"
+	"github.com/simonerom/IoTeXGroupITBot/spamFilter"
 )
 
 
@@ -62,7 +63,12 @@ func main() {
 				// We log any new join
 				LogNewUserJoined(message.Chat, user)
 
-				// Send welcome message
+				// Check spam messages into new user first/last name and kick it
+				if !spamFilter.FilterNewUserJoined(bot, message) {
+					continue
+				}
+
+				// If everything is good send welcome message
 				if configuration.Cfg.PostWelcomeMessage {
 					botApi.PostWelcomeMessage(bot, chat, message)
 				}
