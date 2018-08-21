@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/IoTeXGroupIT/IoTeXGroupITBot.svg?style=svg)](https://circleci.com/gh/IoTeXGroupIT/IoTeXGroupITBot)
 # IoTeXGroupITBot
 A custom Telegram bot written in Go Lang to manage the [IoTeXGroupIT](http://t.me/IoTeXGroupIT) Telegram Group, especially to filter out chinese fake users which insert the spam message embedded in the First/Last Name fields.
 
