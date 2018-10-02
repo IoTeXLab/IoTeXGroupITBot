@@ -73,8 +73,8 @@ func PostRoadmapImage(bot *BotAPI, chat *Chat, message *Message) {
 	bot.Send(msg)
 }
 
-// Kick the user from the chat. Optionally, ban it
-func KickUser(bot *BotAPI, chat *Chat, user User, ban bool) {
+// KickUser Kick the user from the chat. Optionally, ban it
+func KickUser(bot *BotAPI, chat *Chat, user *User, ban bool) {
 	kickConfig := KickChatMemberConfig{}
 	kickConfig.ChatID = chat.ID
 	kickConfig.UserID = user.ID

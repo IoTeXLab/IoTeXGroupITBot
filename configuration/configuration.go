@@ -22,7 +22,7 @@ func init() {
 	err := gonfig.GetConf("configuration.json", &Cfg)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 }

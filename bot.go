@@ -1,12 +1,13 @@
 package main
 
 import (
+	"log"
+
 	"github.com/IoTeXGroupIT/IoTeXGroupITBot/botApi"
 	"github.com/IoTeXGroupIT/IoTeXGroupITBot/configuration"
 	"github.com/IoTeXGroupIT/IoTeXGroupITBot/reminder"
-	"github.com/IoTeXGroupIT/IoTeXGroupITBot/spamFilter"
+	spamfilter "github.com/IoTeXGroupIT/IoTeXGroupITBot/spamFilter"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 )
 
 func main() {
@@ -56,6 +57,8 @@ func main() {
 			continue
 		}
 
+		spamfilter.FilterMessageWithLinks(bot, message)
+
 		// Manage new users joined messages
 		if message.NewChatMembers != nil {
 
@@ -64,7 +67,7 @@ func main() {
 				LogNewUserJoined(message.Chat, user)
 
 				// Check spam messages into new user first/last name and kick it
-				if !spamFilter.FilterNewUserJoined(bot, message) {
+				if !spamfilter.FilterNewUserJoined(bot, message) {
 					continue
 				}
 
@@ -78,7 +81,7 @@ func main() {
 	}
 }
 
-// Log the new user join event
+// LogNewUserJoined Log the new user joined event
 func LogNewUserJoined(chat *tgbotapi.Chat, user tgbotapi.User) {
 	log.Printf("_________________________")
 	log.Printf("New user joined the group %s", chat.UserName)
